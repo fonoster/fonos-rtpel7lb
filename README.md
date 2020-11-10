@@ -4,7 +4,7 @@
 
 ![publish to docker](https://github.com/fonoster/fonos-rtpel7lb/workflows/publish%20to%20docker%20hub/badge.svg)
 
-This load balancer aims to assist in scaling the media traffic in a VoIP network deployment. It purposely uses the NG Control Protocol to allow for a "drop-in" replacement of RTPEngine.
+This load balancer aims to assist in scaling the media traffic in a VoIP network deployment. It uses the NG Control Protocol(NGCP) to allow for a "drop-in" replacement of RTPEngine.
 
 For more documentation on how Fonos images are constructed and how to work with them, please see the [documentation](https://github.com/fonoster/fonos).
 
@@ -32,41 +32,82 @@ docker pull fonoster/fonos-rtpel7lb:%%VERSION%%
 The following is a basic example of using this image.
 
 ```
-docker run ...
+docker run -it \
+    -p 2223:2223 \
+    -p 8080:8080 \
+    fonoster/fonos-rtpel7lb
 ```
 
-## Image Specs
+## Specs
 
-- [ ] Receive request using the NG Control Protocol and forward to RTPEngine instances
-- [ ] Implement an admin interface (Restful API)
-- [ ] Implement loadbalancing using a round-robin algorithm 
+- [ ] Receive request using the [NG Control Protocol](https://github.com/sipwise/rtpengine#the-ng-control-protocol) and forward to RTPEngine instances
+- [ ] Load balance RTP traffic using a round-robin algorithm 
+- [ ] Implement a Restful API for internal service managment
 
 The admin interface must implement PUSH, GET, and DELETE methods. 
+
+Base URL
+
+`/engines`
+
+<details><summary>List</summary>
+
+This method returns a list of available RTPEngines.
+
+**Method**
+
+`GET`
+
+**Parameters**
+
+Do not supply any parameter to this method.
+
+**Request body**
+
+Do not supply a request body with this method.
+
+**Response**
+
+If successful this method returns a list with all available RTPEngines.
+
+**Sample Call**
+
+```json
+GET /engines
+{
+
+}
+
+HTTP/1.1 200 OK
+{
+   "status":"200",
+   "message":"Successful request",
+   "data":[
+      {
+         "id":"rtpengine01",
+         "hostIp":"10.22.2.88"
+      },
+      {
+         "id":"rtpengine02",
+         "hostIp":"10.22.2.89"
+      }
+   ]
+}
+```
+</details>
+
 
 ## Environment Variables
 
 Environment variables are used in the entry point script to render configuration templates. You can specify the values of these variables during `docker run`, `docker-compose up`, or in Kubernetes manifests in the `env` array.
 
-{Each environment variable might have 1-2 sentences of description. If it needs longer than that, it should probably have a sub-section within Features to elaborate.}
-
-- `AGI_URL` - Agi Endpoint. **Required**
-- `SIPPROXY_HOST` - Proxy's IP address
+- `NG_CONTROL_PORT` - To receive control requests from RTPEngine clients such as Routr, OpenSIPS, Kamailio, etc.
+- `ADMIN_PORT` - Port for internal service operations
 
 ## Exposed ports
 
-- `5060` - Default SIP port
-- `5061` - Default SIP port for TLS signaling
-- `5062` - Default SIP port for TLS support
-
-## Volumes
-
-- `/your/file/location` - File location
-- `/some/special/script.sh` - List special scripts
-
-## Useful File Locations
-
-- `/some/special/script.sh` - List special scripts
-- `/magic/dir` - And also directories
+- `2223` - Default NG Control Protocol Port
+- `8080` - Default Admin Port
 
 ## Contributing
 
@@ -74,6 +115,7 @@ Please read [CONTRIBUTING.md](https://github.com/fonoster/fonos/blob/master/CONT
 
 ## Authors
 
+- [Hector Ventura](https://github.com/hectorvent)
 - [Pedro Sanders](https://github.com/psanders)
 
 See also the list of contributors who [participated](https://github.com/fonoster/rtpel7lb/contributors) in this project.
