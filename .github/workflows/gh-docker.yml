@@ -12,7 +12,7 @@ jobs:
       - name: Publish
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
-          name: fonoster/chmodhelper
+          name: fonoster/fonos-rtpel7lb
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           workdir: .
