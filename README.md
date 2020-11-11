@@ -6,6 +6,8 @@
 
 This load balancer aims to assist in scaling the media traffic in a VoIP network deployment. It uses the NG Control Protocol(NGCP) to allow for a "drop-in" replacement of RTPEngine.
 
+![Highlevel ARQ](https://raw.githubusercontent.com/fonoster/fonos-rtpel7lb/main/diagram.png "RTPEL7LB, high-level diagram")
+
 For more documentation on how Fonos images are constructed and how to work with them, please see the [documentation](https://github.com/fonoster/fonos).
 
 ## Available Versions
