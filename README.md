@@ -1,6 +1,6 @@
 # Fonos RTPEL7LB
 
-> A layer 7 load balancer to serve ng control protocol requests to rtpengine servers
+> A layer 7 load balancer to serve ng control protocol requests to instances of rtpengine.
 
 ![publish to docker](https://github.com/fonoster/fonos-rtpel7lb/workflows/publish%20to%20docker%20hub/badge.svg)
 
