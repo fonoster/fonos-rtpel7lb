@@ -4,7 +4,7 @@
 
 ![publish to docker](https://github.com/fonoster/fonos-rtpel7lb/workflows/publish%20to%20docker%20hub/badge.svg)
 
-This load balancer aims to assist in scaling the media traffic in a VoIP network deployment. It uses the NG Control Protocol(NGCP) to allow for a "drop-in" replacement of RTPEngine.
+This load balancer aims to assist in scaling the media traffic in a VoIP network deployment. It uses the [NG Control Protocol (NGCP)](https://github.com/sipwise/rtpengine#the-ng-control-protocol) to allow for a "drop-in" replacement of RTPEngine.
 
 ![Highlevel ARQ](https://raw.githubusercontent.com/fonoster/fonos-rtpel7lb/main/diagram.png "RTPEL7LB, high-level diagram")
 
@@ -44,8 +44,8 @@ docker run -it \
 
 This service must implement the following:
 
-- [ ] Receive request using the [NG Control Protocol](https://github.com/sipwise/rtpengine#the-ng-control-protocol) and forward to instances of RTPEngine 
-- [ ] Load balance RTP traffic using a round-robin algorithm 
+- [ ] Receive request using the NGCP and forward to instances of RTPEngine 
+- [ ] Load balance NGCP traffic using a round-robin algorithm 
 - [ ] Implement a Restful API for internal service managment
 
 The Restful API must implement the following methods:
