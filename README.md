@@ -35,7 +35,7 @@ The following is a basic example of using this image.
 
 ```
 docker run -it \
-    -p 2223:2223 \
+    -p 22222:22222 \
     -p 8080:8080 \
     fonoster/fonos-rtpel7lb
 ```
@@ -264,13 +264,13 @@ HTTP/1.1 200 OK
 
 Environment variables are used in the entry point script to render configuration templates. You can specify the values of these variables during `docker run`, `docker-compose up`, or in Kubernetes manifests in the `env` array.
 
-- `NG_CONTROL_PORT` - To receive control requests from RTPEngine clients such as Routr, OpenSIPS, Kamailio, etc.
-- `ADMIN_PORT` - Port for operations internal to this service 
+- `NG_CONTROL_PORT` - To receive control requests from RTPEngine clients such as Routr, OpenSIPS, Kamailio, etc. Defaults to `22222`
+- `ADMIN_PORT` - Port for operations internal to this service. Defautls to `8080`
 - `TIMEOUT` - Time in seconds to receive hearbeat(or be removed). Defaults to `30`
 
 ## Exposed ports
 
-- `2223` - Default NG Control Protocol Port
+- `22222` - Default NG Control Protocol Port
 - `8080` - Default Admin Port
 
 ## Contributing
