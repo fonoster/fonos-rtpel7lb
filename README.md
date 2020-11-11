@@ -50,7 +50,7 @@ API endpoint: `/engines`
 
 <details><summary>Add</summary>
 
-Adds a new RTPEngine.
+<br>Adds a new RTPEngine.</br>
 
 **Method**
 
@@ -86,9 +86,90 @@ HTTP/1.1 201 Created
 ```
 </details>
 
+<details><summary>Get</summary>
+
+<br>This method returns an RTPEngine by ID.</br>
+
+**Method**
+
+`GET`
+
+**Parameters**
+
+| Parameter Name | Type   | Value | Description
+| ---  | :--------- |  :--------- |  :--------- |
+| id |  path | string | Engine identifier |
+
+**Request body**
+
+Do not supply a request body with this method.
+
+**Response**
+
+If successful this method returns a single RTPEngine.
+
+**Sample Call**
+
+```json
+GET /engines/{id}
+{
+
+}
+
+HTTP/1.1 200 OK
+{
+   "status":"200",
+   "message":"Successful request",
+   "data":{
+     "id":"rtpengine01",
+     "hostAddress":"10.22.2.88",
+     "status":"Active",
+     "updateTime":"1605052750"
+   }
+}
+```
+</details>
+
+<details><summary>Update</summary>
+
+<br>Updates an existing RTPEngine.</br>
+
+**Method**
+
+`PUT`
+
+**Parameters**
+
+This method does not receive any parameters.
+
+**Request body**
+
+An empty body will cause the server to refresh the `timeUpdate`. 
+
+> You might also Ppass the `status`. The allowed parameters are `Active` and `Suspended.`
+
+**Response**
+
+If successful this method updates an existing RTPEngine.
+
+**Sample Call**
+
+```json
+PUT /engines/{id}
+{
+}
+
+HTTP/1.1 200 OK
+{
+  "status": "200",
+  "message": "Successful request"
+}
+```
+</details>
+
 <details><summary>Delete</summary>
     
-Removes an RTPEngine by ID.
+<br>Removes an RTPEngine by ID.</br>
 
 **Method**
 
@@ -98,7 +179,7 @@ Removes an RTPEngine by ID.
 
 | Parameter Name | Type   | Value | Description
 | ---  | :--------- |  :--------- |  :--------- |
-| id |  path | string | Engine reference |
+| id |  path | string | Engine indentifier |
 
 **Request body**
 
@@ -106,7 +187,7 @@ Do not supply a request body with this method.
 
 **Response**
 
-If successful this method removes an Agent resource.
+If successful this method removes the RTPEngine.
 
 **Sample Call**
 
@@ -126,7 +207,7 @@ HTTP/1.1 200 OK
 
 <details><summary>List</summary>
 
-This method returns a list of available RTPEngines.
+<br>This method returns a list of available RTPEngines.</br>
 
 **Method**
 
@@ -180,7 +261,8 @@ HTTP/1.1 200 OK
 Environment variables are used in the entry point script to render configuration templates. You can specify the values of these variables during `docker run`, `docker-compose up`, or in Kubernetes manifests in the `env` array.
 
 - `NG_CONTROL_PORT` - To receive control requests from RTPEngine clients such as Routr, OpenSIPS, Kamailio, etc.
-- `ADMIN_PORT` - Port for internal service operations
+- `ADMIN_PORT` - Port for operations internal to this service 
+- `TIMEOUT` - Time in seconds to receive hearbeat(or be removed). Defaults to `30`
 
 ## Exposed ports
 
