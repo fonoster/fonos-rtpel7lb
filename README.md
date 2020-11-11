@@ -50,6 +50,44 @@ Base URL
 
 `/engines`
 
+<details><summary>Add</summary>
+
+Adds a new RTPEngine.
+
+**Method**
+
+`POST`
+
+**Parameters**
+
+Do not supply any parameter to this method.
+
+**Request body**
+
+In the body you must include at a minimal a `hostAddress.` If no `id` is provided the service will generate one.
+
+**Response**
+
+If successful this method adds a new RTPEngine to its list.
+
+**Sample Call**
+
+```json
+POST /engines
+{
+  "id": "rtpengine01",
+  "hostAddress": "10.22.2.89"
+}
+
+HTTP/1.1 201 Created
+{
+  "status": "201",
+  "message": "Added",
+  "data": "rtpengine01"
+}
+```
+</details>
+
 <details><summary>List</summary>
 
 This method returns a list of available RTPEngines.
@@ -85,11 +123,15 @@ HTTP/1.1 200 OK
    "data":[
       {
          "id":"rtpengine01",
-         "hostIp":"10.22.2.88"
+         "hostAddress":"10.22.2.88",
+         "status":"Active",
+         "updateTime":"1605052750"
       },
       {
          "id":"rtpengine02",
-         "hostIp":"10.22.2.89"
+         "hostAddress":"10.22.2.89",
+         "status":"Suspended",
+         "updateTime":"1605056750"
       }
    ]
 }
