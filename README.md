@@ -42,6 +42,8 @@ docker run -it \
 
 ## Specs
 
+This service must implement the following:
+
 - [ ] Receive request using the [NG Control Protocol](https://github.com/sipwise/rtpengine#the-ng-control-protocol) and forward to instances of RTPEngine 
 - [ ] Load balance RTP traffic using a round-robin algorithm 
 - [ ] Implement a Restful API for internal service managment
