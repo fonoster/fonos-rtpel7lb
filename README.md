@@ -44,11 +44,9 @@ docker run -it \
 - [ ] Load balance RTP traffic using a round-robin algorithm 
 - [ ] Implement a Restful API for internal service managment
 
-The admin interface must implement PUSH, GET, and DELETE methods. 
+The Restful API must implement the following methods:
 
-Base URL
-
-`/engines`
+API endpoint: `/engines`
 
 <details><summary>Add</summary>
 
@@ -84,6 +82,44 @@ HTTP/1.1 201 Created
   "status": "201",
   "message": "Added",
   "data": "rtpengine01"
+}
+```
+</details>
+
+<details><summary>Delete</summary>
+    
+Removes an RTPEngine by ID.
+
+**Method**
+
+`DELETE`
+
+**Parameters**
+
+| Parameter Name | Type   | Value | Description
+| ---  | :--------- |  :--------- |  :--------- |
+| id |  path | string | Engine reference |
+
+**Request body**
+
+Do not supply a request body with this method.
+
+**Response**
+
+If successful this method removes an Agent resource.
+
+**Sample Call**
+
+```json
+DELETE /engines/rtpengine01
+{
+
+}
+
+HTTP/1.1 200 OK
+{
+  "status": "200",
+  "message": "Successful request"
 }
 ```
 </details>
