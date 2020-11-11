@@ -264,7 +264,7 @@ HTTP/1.1 200 OK
 
 Environment variables are used in the entry point script to render configuration templates. You can specify the values of these variables during `docker run`, `docker-compose up`, or in Kubernetes manifests in the `env` array.
 
-- `NG_CONTROL_PORT` - To receive control requests from RTPEngine clients such as Routr, OpenSIPS, Kamailio, etc. Defaults to `22222`
+- `NG_PORT` - To receive control requests from RTPEngine clients such as Routr, OpenSIPS, Kamailio, etc. Defaults to `22222`
 - `ADMIN_PORT` - Port for operations internal to this service. Defautls to `8080`
 - `TIMEOUT` - Time in seconds to receive hearbeat(or be removed). Defaults to `30`
 
