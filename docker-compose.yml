@@ -1,0 +1,57 @@
+version: '3.7'
+
+services:
+
+  # RTPEngine L7 Load Balancer
+  rtpel7lb:
+    env_file: .env
+    build: .
+    image: fonoster/fonos-rtpel7lb:latest
+    restart: always
+    ports: 
+      - ${RTPEL7LB_NG_PORT}:${RTPEL7LB_NG_PORT}/udp
+      - ${RTPEL7LB_ADMIN}:${RTPEL7LB_ADMIN}/udp
+    networks:
+      rtpel7lb:
+        aliases:
+          - rtpel7lb.rtpel7lb
+
+  # RTPEngine instance N1
+  rtpengine_n1:
+    env_file: .env
+    image: psanders/rtpengine:latest
+    restart: always
+    ports: 
+      - ${RTPE_N1_NG_PORT}:${RTPE_N1_NG_PORT}/udp 
+      - ${RTPE_N1_PORT_MIN}-${RTPE_N1_PORT_MAX}:${RTPE_N1_PORT_MIN}-${RTPE_N1_PORT_MAX}/udp
+    environment:
+      PUBLIC_IP: ${PUBLIC_IP}
+      BIND_PORT: ${RTPE_N1_NG_PORT}
+      PORT_MIN: ${RTPE_N1_PORT_MIN}
+      PORT_MAX: ${RTPE_N1_PORT_MAX}
+    networks:
+      rtpel7lb:
+        aliases:
+          - rtpengine_n1.rtpel7lb
+
+  # RTPEngine instance N2
+  rtpengine_n2:
+    env_file: .env
+    image: psanders/rtpengine:latest
+    restart: always
+    ports: 
+      - ${RTPE_N2_NG_PORT}:${RTPE_N2_NG_PORT}/udp 
+      - ${RTPE_N2_PORT_MIN}-${RTPE_N2_PORT_MAX}:${RTPE_N2_PORT_MIN}-${RTPE_N2_PORT_MAX}/udp
+    environment:
+      PUBLIC_IP: ${PUBLIC_IP}
+      BIND_PORT: ${RTPE_N2_NG_PORT}
+      PORT_MIN: ${RTPE_N2_PORT_MIN}
+      PORT_MAX: ${RTPE_N2_PORT_MAX}
+    networks:
+      rtpel7lb:
+        aliases:
+          - rtpengine_n2.rtpel7lb
+
+# Custom network so all services can communicate using a FQDN
+networks:
+  rtpel7lb:
