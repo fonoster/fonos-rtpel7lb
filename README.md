@@ -44,8 +44,8 @@ docker run -it \
 
 This service must implement the following:
 
-- [ ] Receive request using the NGCP and forward to instances of RTPEngine 
-- [ ] Load balance NGCP traffic using a round-robin algorithm 
+- [ ] Receive request using the NGCP and forward to instances of RTPEngine
+- [ ] Load balance NGCP traffic using a round-robin algorithm
 - [ ] Implement a Restful API for internal service managment
 
 The Restful API must implement the following methods:
@@ -148,7 +148,7 @@ This method does not receive any parameters.
 
 **Request body**
 
-An empty body will cause the server to refresh the `timeUpdate`. 
+An empty body will cause the server to refresh the `timeUpdate`.
 
 > You might also Ppass the `status`. The allowed parameters are `Active` and `Suspended.`
 
@@ -172,7 +172,7 @@ HTTP/1.1 200 OK
 </details>
 
 <details><summary>Delete</summary>
-    
+
 <br>Removes an RTPEngine by ID.</br>
 
 **Method**
@@ -282,7 +282,7 @@ Please read [CONTRIBUTING.md](https://github.com/fonoster/fonos/blob/master/CONT
 - [Hector Ventura](https://github.com/hectorvent)
 - [Pedro Sanders](https://github.com/psanders)
 
-See also the list of contributors who [participated](https://github.com/fonoster/rtpel7lb/contributors) in this project.
+See also the list of contributors who [participated](https://github.com/fonoster/fonos-rtpel7lb/contributors) in this project.
 
 ## License
 
