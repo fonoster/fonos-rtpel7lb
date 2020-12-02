@@ -1,14 +1,17 @@
 version: '3.7'
 
 services:
-
   # RTPEngine L7 Load Balancer
   rtpel7lb:
     env_file: .env
-    build: .
+    build:
+      context: ./
+      dockerfile: Dockerfile.dev
     image: fonoster/fonos-rtpel7lb:latest
     restart: always
-    ports: 
+    volumes:
+      - ./:/app
+    ports:
       - ${RTPEL7LB_NG_PORT}:${RTPEL7LB_NG_PORT}/udp
       - ${RTPEL7LB_ADMIN}:${RTPEL7LB_ADMIN}/udp
     networks:
@@ -21,8 +24,8 @@ services:
     env_file: .env
     image: psanders/rtpengine:latest
     restart: always
-    ports: 
-      - ${RTPE_N1_NG_PORT}:${RTPE_N1_NG_PORT}/udp 
+    ports:
+      - ${RTPE_N1_NG_PORT}:${RTPE_N1_NG_PORT}/udp
       - ${RTPE_N1_PORT_MIN}-${RTPE_N1_PORT_MAX}:${RTPE_N1_PORT_MIN}-${RTPE_N1_PORT_MAX}/udp
     environment:
       PUBLIC_IP: ${PUBLIC_IP}
@@ -39,8 +42,8 @@ services:
     env_file: .env
     image: psanders/rtpengine:latest
     restart: always
-    ports: 
-      - ${RTPE_N2_NG_PORT}:${RTPE_N2_NG_PORT}/udp 
+    ports:
+      - ${RTPE_N2_NG_PORT}:${RTPE_N2_NG_PORT}/udp
       - ${RTPE_N2_PORT_MIN}-${RTPE_N2_PORT_MAX}:${RTPE_N2_PORT_MIN}-${RTPE_N2_PORT_MAX}/udp
     environment:
       PUBLIC_IP: ${PUBLIC_IP}

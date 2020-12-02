@@ -1,0 +1,35 @@
+{
+  "name": "fonos-rtpel7lb",
+  "version": "0.0.1",
+  "description": "RTPEngine Load balancer (cluster)",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon --exec babel-node src/index.js",
+    "build": "babel -d ./build ./src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fonoster/fonos-rtpel7lb.git"
+  },
+  "keywords": [
+    "RTP",
+    "VoIP"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fonoster/fonos-rtpel7lb/issues"
+  },
+  "homepage": "https://github.com/fonoster/fonos-rtpel7lb#readme",
+  "dependencies": {
+    "rtpengine-client": "^0.1.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.6.4",
+    "@babel/core": "^7.6.4",
+    "@babel/node": "^7.6.3",
+    "@babel/plugin-proposal-class-properties": "^7.7.0",
+    "@babel/plugin-proposal-optional-chaining": "^7.6.0",
+    "@babel/preset-env": "^7.6.3"
+  }
+}
