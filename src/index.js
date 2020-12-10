@@ -1,40 +1,21 @@
-import * as udp from 'dgram'
+import Server from './Server'
+import { MemoryStore, RedisStore } from './store'
 
 const NG_PORT = process.env.RTPEL7LB_NG_PORT || 22222
+const USE_REDIS_STORE = 'YES' == process.env.RTPEL7LB_STORE_REDIS
 
-var server = udp.createSocket('udp4');
+// TODO:
+//  - Load API
+//  - Load Storage Provider
 
-server.on('error', function (error) {
-  console.log('Error: ' + error);
-  server.close();
-});
+let server = new Server(NG_PORT, "0.0.0.0");
+let storeProvider = new MemoryStore();
 
-// emits on new datagram msg
-server.on('message', function (msg, info) {
+if (USE_REDIS_STORE){
+  storeProvider = new RedisStore();
+}
 
-  console.log('Data received from client : ' + msg.toString());
-  console.log('Received %d bytes from %s:%d\n', msg.length, info.address, info.port);
+server.setStoreProvider(storeProvider)
 
-  //sending msg
-  server.send(msg, info.port, info.address, function (error) {
-    if (error) {
-      client.close();
-    } else {
-      console.log('Data sent !!!');
-    }
-  });
-});
-
-server.on('listening', function () {
-  let address = server.address();
-  let port = address.port;
-  let ipaddr = address.address;
-  console.log('Server listening on '+ipaddr+':'+port);
-});
-
-//emits after the socket is closed using socket.close();
-server.on('close', function () {
-  console.log('Socket is closed !');
-});
-
-server.bind(NG_PORT);
+// Start RTPEngine Proxy
+server.start();
