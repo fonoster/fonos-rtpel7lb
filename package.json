@@ -22,7 +22,8 @@
   },
   "homepage": "https://github.com/fonoster/fonos-rtpel7lb#readme",
   "dependencies": {
-    "rtpengine-client": "^0.1.1"
+    "rtpengine-client": "^0.1.1",
+    "wrr-pool": "^1.1.4"
   },
   "devDependencies": {
     "@babel/cli": "^7.6.4",

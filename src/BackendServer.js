@@ -1,4 +1,5 @@
 import * as udp from 'dgram'
+import WRRPool from 'wrr-pool'
 
 class BackendServer {
 
@@ -10,22 +11,25 @@ class BackendServer {
         this.messages = new Map();
 
         // TODO: create interface/API to register rtpengine server automatically
-        this.rtpEngineServers = [
+        this.rtpEngines = [
             {
-                name: 'rtpengine_n1',
-                address: '192.168.1.239',
-                port: 22223,
-                hits: 0,
+                id: 'rtpengine_n1',
+                hostAddress: '192.168.1.239',
+                hostPort: 22223,
+                weight: 2,
             },
             {
-                name: 'rtpengine_n2',
-                address: '192.168.1.239',
-                port: 22224,
-                hits: 0,
+                id: 'rtpengine_n2',
+                hostAddress: '192.168.1.239',
+                hostPort: 22224,
+                weight: 4,
             }
         ];
 
-        this.rtpEngineServersAvailable = 2;
+        this.pool = new WRRPool();
+        this.rtpEngines.forEach( v => this.pool.add(v, v.weight) );
+
+        this.rtpEnginesAvailable = 2;
     }
 
     send(cookie, message) {
@@ -37,12 +41,11 @@ class BackendServer {
 
             // TODO: Manage timeouts.
             // TODO: Manage errors and try others backend servers if exists.
-            // TODO: create algorithm to select a backend rtpengine (round-robin, weigth, etc)
-            let rtpEngine = this.rtpEngineServers[0];
+            let rtpEngine = this.pool.next();
 
-            handlerAndData.server = rtpEngine;
+            handlerAndData.usedRtpEngine = rtpEngine;
 
-            this.socket.send(message, rtpEngine.port, rtpEngine.address, (err) => {
+            this.socket.send(message, rtpEngine.hostPort, rtpEngine.hostAddress, (err) => {
                 if (err) {
                   debug(`error sending command to rtpengine at ${this.remoteHost}:${this.remotePort}`) ;
                   this.messages.delete(cookie) ;
@@ -71,9 +74,9 @@ class BackendServer {
         const p = this.messages.get(id);
         this.messages.delete(id);
 
-        console.log('Reply by backend Server => ', p.server);
+        console.log('Reply from RTPEngine => ', p.usedRtpEngine);
 
-        p.resolve({ message: msg, server: p.server });
+        p.resolve({ message: msg, server: p.usedRtpEngine });
     }
 
     onError(err){
