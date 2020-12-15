@@ -1,4 +1,5 @@
-import { Client, RtpEngineError } from 'rtpengine-client'
+import BencodeUtils from './utils/BencodeUtils'
+import BackendServer from './BackendServer'
 import * as udp from 'dgram'
 
 class Server {
@@ -6,69 +7,99 @@ class Server {
     constructor(port, ipaddr) {
         this.port = port || 22222;
         this.ipaddr = ipaddr || "0.0.0.0";
-
         this.messages = new Map();
     }
 
     start() {
+
         this.socket = udp.createSocket('udp4');
         this.socket.bind(this.port, this.ipaddr);
 
-         //emits after the socket is closed using socket.close();
-         this.socket.on('close', function () {
+        //emits after the socket is closed using socket.close();
+        this.socket.on('close', function () {
             console.log('Socket is closed !');
         });
 
         let ipaddr = this.ipaddr;
         let port = this.port;
 
-        this.socket.on('message', this._onMessage.bind(this)) ;
-        this.socket.on('error', this._onError.bind(this)) ;
+        this.socket.on('message', this.onMessage.bind(this)) ;
+        this.socket.on('error', this.onError.bind(this)) ;
 
         this.socket.on('listening', function () {
             console.log(`Server listening on ${ipaddr}:${port}`);
         });
+
+        // TODO: load static defined RTPEngine servers
+        this.backendServerManager = new BackendServer();
     }
 
     setStoreProvider(store){
         this.store = store;
     }
 
-    _onMessage(msg, info) {
-        const obj = Client.decodeMessage(msg);
+    onMessage(msg, info) {
+        let obj = BencodeUtils.decodeMessage(msg);
+
+        console.log('Data received from client : ' + msg.toString());
 
         if (!obj) {
             this._onError(new RtpEngineError(`malformed/unexpected message format ${msg}`));
-            return ;
-          }
+            return;
+        }
 
-          // TODO: select one of the RTPEngine servers
-          console.log('decode: ', obj);
+        console.log(`Received command '${obj.data.command}' from ${info.address}:${info.port}`);
+        console.log(`Received command : `+JSON.stringify(obj));
 
-          console.log('Data received from client : ' + msg.toString());
-          console.log('Received %d bytes from %s:%d\n', msg.length, info.address, info.port);
+        switch (obj.data.command){
+            case "ping":
+                this.checkAvailableRtpServers(info, obj);
+                break;
+            case "offer":
+                this.offer(info, obj, msg);
+                break;
+            default:
+                console.log(`Received command : ${JSON.stringify(obj)}`);
 
-          if (obj.data.command == "ping"){
-                let message = Client.encodeMessage(obj.id, {result:"pong"});
-                console.log(` sending ${obj.id} : `, message.toString())
-                //sending msg
-                this.socket.send(message, info.port, info.address, function (error) {
-                    if (error) {
-                    // client.close();
-                    } else {
-                        console.log('Data sent !!!');
-                    }
-                });
-          }
+                let mes = {
+                    "result": "error",
+                    "error-reason": `Method "${obj.data.command}" not implemented yet`
+                };
+
+                let message = BencodeUtils.encodeMessage(obj.id, mes);
+                this.reply(info, message);
+        }
     }
 
-    _onError(err){
-
+    onError(err){
         console.error(err);
     }
 
+    reply(info, message){
+        this.socket.send(message, info.port, info.address, function (error) {
+            if (error) {
+                console.log(`error sending reply to client.`);
+            }
+        });
+    }
 
+    checkAvailableRtpServers(info, obj) {
+         // TODO: create a cron process that handle backend servers status.
+         if (this.backendServerManager.checkAvailableRtpServers()) {
+            console.log(`Replying to 'ping' from ${info.address}:${info.port} (elapsed time 0.000000 sec)`);
+            let message = BencodeUtils.encodeMessage(obj.id, { result: "pong" });
+            this.reply(info, message);
+        }
+    }
 
+    offer(info, obj, msg) {
+        this.backendServerManager.send(obj.id, msg)
+            .then(res => {
+                console.log('res => ', res.message.toString());
+                this.reply(info, res.message);
+            })
+            .catch( err => console.log(err));
+    }
 }
 
 module.exports = Server;
