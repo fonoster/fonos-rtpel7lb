@@ -4,13 +4,8 @@ services:
   # RTPEngine L7 Load Balancer
   rtpel7lb:
     env_file: .env
-    build:
-      context: ./
-      dockerfile: Dockerfile.dev
     image: fonoster/fonos-rtpel7lb:latest
     restart: always
-    volumes:
-      - ./:/app
     ports:
       - ${RTPEL7LB_NG_PORT}:${RTPEL7LB_NG_PORT}/udp
       - ${RTPEL7LB_ADMIN}:${RTPEL7LB_ADMIN}/udp

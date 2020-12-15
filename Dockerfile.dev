@@ -1,7 +1,0 @@
-FROM node:10.16.0-alpine
-
-WORKDIR /app
-
-RUN npm install -g nodemon
-
-CMD ["npm", "start"]
