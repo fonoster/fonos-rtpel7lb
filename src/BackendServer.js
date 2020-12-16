@@ -32,33 +32,41 @@ class BackendServer {
         this.rtpEnginesAvailable = 2;
     }
 
-    send(cookie, message) {
+    send(cookie, message, serverId) {
         return new Promise((resolve, reject) => {
-
-            let handlerAndData = { resolve, reject }
-
-            this.messages.set(cookie, handlerAndData);
 
             // TODO: Manage timeouts.
             // TODO: Manage errors and try others backend servers if exists.
-            let rtpEngine = this.pool.next();
+            // TODO: Handle when not RTPEngine is found.
+            let rtpEngine = null;
+            if (serverId != null){
+                let data = this.pool.get({ id: serverId });
+                if (data != null){
+                    rtpEngine = data.value;
+                }
+            } else {
+                rtpEngine = this.pool.next();
+            }
 
-            handlerAndData.usedRtpEngine = rtpEngine;
+            let handlerAndData = { resolve, reject, usedRtpEngine: rtpEngine };
+            this.messages.set(cookie, handlerAndData);
+
+            console.log(`Sending command to rtpengine "${rtpEngine.id}" at ${rtpEngine.hostAddress}:${rtpEngine.hostPort}`) ;
 
             this.socket.send(message, rtpEngine.hostPort, rtpEngine.hostAddress, (err) => {
                 if (err) {
-                  debug(`error sending command to rtpengine at ${this.remoteHost}:${this.remotePort}`) ;
-                  this.messages.delete(cookie) ;
-                  return reject(err);
+                    console.log(`Error sending command to rtpengine "${rtpEngine.id}" at ${rtpEngine.hostAddress}:${rtpEngine.hostPort}`) ;
+                    this.messages.delete(cookie) ;
+                    return reject(err);
                 }
-              });
+            });
         });
 
     }
 
     checkAvailableRtpServers() {
         // TODO: create a cron process that handle backend servers status check.
-        return this.rtpEngineServersAvailable > 0
+        return this.rtpEnginesAvailable > 0
     }
 
     onMessage(msg) {
@@ -68,15 +76,15 @@ class BackendServer {
 
         // TODO: handle this error
         if (!this.messages.has(id)) {
-            return ;
+            return;
         }
 
-        const p = this.messages.get(id);
+        const handlerAndData = this.messages.get(id);
         this.messages.delete(id);
 
-        console.log('Reply from RTPEngine => ', p.usedRtpEngine);
+        console.log('Reply from RTPEngine => ', handlerAndData.usedRtpEngine);
 
-        p.resolve({ message: msg, server: p.usedRtpEngine });
+        handlerAndData.resolve({ message: msg, server: handlerAndData.usedRtpEngine });
     }
 
     onError(err){
