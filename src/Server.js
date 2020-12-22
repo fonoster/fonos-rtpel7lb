@@ -88,7 +88,7 @@ class Server {
         }
     }
 
-    getKey(msg) {
+    getKey(obj) {
         let callId = obj.data['call-id'];
         let fromTag = obj.data['from-tag'];
         return `${callId}:${fromTag}`;
@@ -96,9 +96,10 @@ class Server {
 
     offer(info, obj, msg) {
 
-        let key = this.getKey(msg);
+        let key = this.getKey(obj);
+        let serverId = this.store.get(key);
 
-        this.backendServerManager.send(obj.id, msg)
+        this.backendServerManager.send(obj.id, msg, serverId)
             .then(res => {
                 this.store.set(key, res.server.id);
                 console.log(`Offer received from server '${res.server.id}'`);
@@ -109,7 +110,7 @@ class Server {
 
     delete(info, obj, msg) {
 
-        let key = this.getKey(msg);
+        let key = this.getKey(obj);
         let serverId = this.store.get(key);
 
         console.log(`Sending 'delete' to server '${serverId}'`);
@@ -124,7 +125,7 @@ class Server {
 
     answer(info, obj, msg) {
 
-        let key = this.getKey(msg);
+        let key = this.getKey(obj);
         let serverId = this.store.get(key);
 
         console.log(`Sending 'answer' to server '${serverId}'`);

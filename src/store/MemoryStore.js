@@ -19,7 +19,7 @@ class MemoryStore {
 
     del(id) {
         if (this.offers.has(id)) {
-            this.messages.delete(id);
+            this.offers.delete(id);
             return true;
         }
 
