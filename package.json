@@ -23,6 +23,7 @@
   "homepage": "https://github.com/fonoster/fonos-rtpel7lb#readme",
   "dependencies": {
     "bencode": "^2.0.1",
+    "redis": "^3.0.2",
     "wrr-pool": "^1.1.4"
   },
   "devDependencies": {
