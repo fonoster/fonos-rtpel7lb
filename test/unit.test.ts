@@ -5,4 +5,6 @@ const sandbox = sinon.createSandbox()
 const expect = chai.expect
 chai.use(sinonChai)
 
-describe('it need test', () => {})
+describe('Test plan', () => {
+    it.skip('it need tests', () => {})
+})

@@ -1,7 +1,7 @@
 {
   "name": "fonos-rtpel7lb",
   "version": "0.0.1",
-  "description": "Load balancer for RTPEngine",
+  "description": "A layer 7 load balancer for RTPEngine.",
   "private": true,
   "nodemonConfig": {
     "watch": [
@@ -12,7 +12,8 @@
     "ignore": "**/*.d.ts"
   },
   "scripts": {
-    "start": "cross-env NODE_ENV=dev nodemon mods/core/src/server/server",
+    "start": "cross-env NODE_ENV=dev nodemon rtpel7lb.js",
+    "build": "tsc -b tsconfig.json",
     "test": "cross-env NODE_ENV=dev nyc --reporter=lcov mocha -r ts-node/register test/unit.test.ts --exit"
   },
   "repository": {
@@ -44,8 +45,13 @@
     "rtpengine-client": "^0.1.1"
   },
   "devDependencies": {
+    "@types/chai": "^4.2.14",
     "@types/mocha": "^8.2.0",
+    "@types/node": "^14.14.22",
+    "@types/sinon": "^9.0.10",
+    "@types/sinon-chai": "^3.2.5",
     "chai": "^4.2.0",
+    "cross-env": "^7.0.3",
     "mocha": "^8.2.1",
     "nodemon": "^2.0.7",
     "nyc": "^15.1.0",
