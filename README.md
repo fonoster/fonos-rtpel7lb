@@ -1,10 +1,10 @@
 # Fonos RTPEL7LB
 
-> A layer 7 load balancer to serve ng control protocol requests to instances of rtpengine.
+> A layer 7 load balancer for RTPEngine boxes.
 
 ![publish to docker](https://github.com/fonoster/fonos-rtpel7lb/workflows/publish%20to%20docker%20hub/badge.svg)
 
-This load balancer aims to assist in scaling the media traffic in a VoIP network deployment. It uses the [NG Control Protocol (NGCP)](https://github.com/sipwise/rtpengine#the-ng-control-protocol) to allow for a "drop-in" replacement of RTPEngine.
+This load balancer aims to assist in scaling the media traffic in a VoIP network. It uses the [NG Control Protocol (NGCP)](https://github.com/sipwise/rtpengine#the-ng-control-protocol) to allow for a "drop-in" replacement of RTPEngine.
 
 ![Highlevel ARQ](https://raw.githubusercontent.com/fonoster/fonos-rtpel7lb/main/diagram.png "RTPEL7LB, high-level diagram")
 
@@ -36,242 +36,28 @@ The following is a basic example of using this image.
 ```
 docker run -it \
     -p 22222:22222 \
-    -p 8080:8080 \
     fonoster/fonos-rtpel7lb
 ```
 
 ## Specs
 
-This service must implement the following:
+This service implement the following the following:
 
-- [ ] Receive request using the NGCP and forward to instances of RTPEngine
+- [ ] Checks on Consul for registered RTPEngines 
+- [ ] Receive NGCP requests and forward those requests to instances of RTPEngine
 - [ ] Load balance NGCP traffic using a round-robin algorithm
-- [ ] Implement a Restful API for internal service managment
-
-The Restful API must implement the following methods:
-
-API endpoint: `/engines`
-
-<details><summary>Add</summary>
-
-<br>Adds a new RTPEngine.</br>
-
-**Method**
-
-`POST`
-
-**Parameters**
-
-Do not supply any parameter to this method.
-
-**Request body**
-
-In the body you must include at a minimal a `hostAddress.` If no `id` is provided the service will generate one.
-
-**Response**
-
-If successful this method adds a new RTPEngine to its list.
-
-**Sample Call**
-
-```json
-POST /engines
-{
-  "id": "rtpengine01",
-  "hostAddress": "10.22.2.89"
-}
-
-HTTP/1.1 201 Created
-{
-  "status": "201",
-  "message": "Added",
-  "data": "rtpengine01"
-}
-```
-</details>
-
-<details><summary>Get</summary>
-
-<br>This method returns an RTPEngine by ID.</br>
-
-**Method**
-
-`GET`
-
-**Parameters**
-
-| Parameter Name | Type   | Value | Description
-| ---  | :--------- |  :--------- |  :--------- |
-| id |  path | string | Engine identifier |
-
-**Request body**
-
-Do not supply a request body with this method.
-
-**Response**
-
-If successful this method returns a single RTPEngine.
-
-**Sample Call**
-
-```json
-GET /engines/{id}
-{
-
-}
-
-HTTP/1.1 200 OK
-{
-   "status":"200",
-   "message":"Successful request",
-   "data":{
-     "id":"rtpengine01",
-     "hostAddress":"10.22.2.88",
-     "status":"Active",
-     "updateTime":"1605052750"
-   }
-}
-```
-</details>
-
-<details><summary>Update</summary>
-
-<br>Updates an existing RTPEngine.</br>
-
-**Method**
-
-`PUT`
-
-**Parameters**
-
-This method does not receive any parameters.
-
-**Request body**
-
-An empty body will cause the server to refresh the `timeUpdate`.
-
-> You might also Ppass the `status`. The allowed parameters are `Active` and `Suspended.`
-
-**Response**
-
-If successful this method updates an existing RTPEngine.
-
-**Sample Call**
-
-```json
-PUT /engines/{id}
-{
-}
-
-HTTP/1.1 200 OK
-{
-  "status": "200",
-  "message": "Successful request"
-}
-```
-</details>
-
-<details><summary>Delete</summary>
-
-<br>Removes an RTPEngine by ID.</br>
-
-**Method**
-
-`DELETE`
-
-**Parameters**
-
-| Parameter Name | Type   | Value | Description
-| ---  | :--------- |  :--------- |  :--------- |
-| id |  path | string | Engine indentifier |
-
-**Request body**
-
-Do not supply a request body with this method.
-
-**Response**
-
-If successful this method removes the RTPEngine.
-
-**Sample Call**
-
-```json
-DELETE /engines/rtpengine01
-{
-
-}
-
-HTTP/1.1 200 OK
-{
-  "status": "200",
-  "message": "Successful request"
-}
-```
-</details>
-
-<details><summary>List</summary>
-
-<br>This method returns a list of available RTPEngines.</br>
-
-**Method**
-
-`GET`
-
-**Parameters**
-
-Do not supply any parameter to this method.
-
-**Request body**
-
-Do not supply a request body with this method.
-
-**Response**
-
-If successful this method returns a list with all available RTPEngines.
-
-**Sample Call**
-
-```json
-GET /engines
-{
-
-}
-
-HTTP/1.1 200 OK
-{
-   "status":"200",
-   "message":"Successful request",
-   "data":[
-      {
-         "id":"rtpengine01",
-         "hostAddress":"10.22.2.88",
-         "status":"Active",
-         "updateTime":"1605052750"
-      },
-      {
-         "id":"rtpengine02",
-         "hostAddress":"10.22.2.89",
-         "status":"Suspended",
-         "updateTime":"1605056750"
-      }
-   ]
-}
-```
-</details>
-
 
 ## Environment Variables
 
 Environment variables are used in the entry point script to render configuration templates. You can specify the values of these variables during `docker run`, `docker-compose up`, or in Kubernetes manifests in the `env` array.
 
-- `NG_PORT` - To receive control requests from RTPEngine clients such as Routr, OpenSIPS, Kamailio, etc. Defaults to `22222`
-- `ADMIN_PORT` - Port for operations internal to this service. Defautls to `8080`
-- `TIMEOUT` - Time in seconds to receive hearbeat(or be removed). Defaults to `30`
+- `NG_PORT` - Port to listen for NGCP requests from Routr, OpenSIPS, Kamailio, etc. Defaults to `22222`
+- `CONSUL_ADDR` - A string in form of `host:port` with the hostname and port of Consul server. **Required**
+- `CONSUL_REFRESH_TIMEOUT` - Time in seconds to refresh the list of boxes from Coonsul. Defaults to `30`
 
 ## Exposed ports
 
 - `22222` - Default NG Control Protocol Port
-- `8080` - Default Admin Port
 
 ## Contributing
 

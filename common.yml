@@ -1,0 +1,13 @@
+# Configuration common to several services
+
+services:
+
+  common:
+    restart: always
+    networks:
+      rtpel7lb:
+    environment:
+      PUBLIC_IP: ${PUBLIC_IP}
+# Custom network so all services can communicate using a FQDN
+networks:
+  rtpel7lb:

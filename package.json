@@ -1,37 +1,67 @@
 {
   "name": "fonos-rtpel7lb",
   "version": "0.0.1",
-  "description": "RTPEngine Load balancer (cluster)",
-  "main": "index.js",
+  "description": "Load balancer for RTPEngine",
+  "private": true,
+  "nodemonConfig": {
+    "watch": [
+      "./src/"
+    ],
+    "ext": "ts",
+    "exec": "ts-node",
+    "ignore": "**/*.d.ts"
+  },
   "scripts": {
-    "start": "nodemon --exec babel-node src/index.js",
-    "build": "babel -d ./build ./src"
+    "start": "cross-env NODE_ENV=dev nodemon mods/core/src/server/server",
+    "test": "cross-env NODE_ENV=dev nyc --reporter=lcov mocha -r ts-node/register test/unit.test.ts --exit"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/fonoster/fonos-rtpel7lb.git"
   },
   "keywords": [
+    "RTPEngine",
     "RTP",
-    "VoIP"
+    "VoIP",
+    "SIP",
+    "Asterisk",
+    "Kamailio",
+    "Routr"
   ],
-  "author": "",
-  "license": "ISC",
+  "bin": {
+    "run": "rtpel7lb.js",
+    "healthcheck": "healthcheck.js"
+  },
+  "author": "Fonoster Team",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/fonoster/fonos-rtpel7lb/issues"
   },
   "homepage": "https://github.com/fonoster/fonos-rtpel7lb#readme",
   "dependencies": {
     "bencode": "^2.0.1",
-    "redis": "^3.0.2",
-    "wrr-pool": "^1.1.4"
+    "consul": "^0.39.0",
+    "rtpengine-client": "^0.1.1"
   },
   "devDependencies": {
-    "@babel/cli": "^7.6.4",
-    "@babel/core": "^7.6.4",
-    "@babel/node": "^7.6.3",
-    "@babel/plugin-proposal-class-properties": "^7.7.0",
-    "@babel/plugin-proposal-optional-chaining": "^7.6.0",
-    "@babel/preset-env": "^7.6.3"
+    "@types/mocha": "^8.2.0",
+    "chai": "^4.2.0",
+    "mocha": "^8.2.1",
+    "nodemon": "^2.0.7",
+    "nyc": "^15.1.0",
+    "sinon": "^9.2.4",
+    "sinon-chai": "^3.5.0",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3"
+  },
+  "lint-staged": {
+    "**/*.ts": [
+      "prettier-standard"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged --allow-empty && node etc/gen_docs.js && git add docs"
+    }
   }
 }
