@@ -43,7 +43,7 @@ docker run -it \
 
 This service implement the following the following:
 
-- [ ] Checks on Consul for registered RTPEngines 
+- [ ] Query Consul for registered RTPEngines 
 - [ ] Receive NGCP requests and forward those requests to instances of RTPEngine
 - [ ] Load balance NGCP traffic using a round-robin algorithm
 
