@@ -5,6 +5,9 @@ version: '3.7'
 services:
 
   redis:
+    extends:
+      file: common.yml
+      service: common
     image: redis:6.0.3-alpine
     command: ['redis-server', '--appendonly', 'yes']
     hostname: redis
