@@ -53,18 +53,18 @@ services:
       PORT_MAX: ${RTPE_N1_PORT_MAX}
 
   # RTPEngine instance N2
-  rtpengine_n2:
-    extends:
-      file: common.yml
-      service: common
-    image: psanders/rtpengine:latest
-    ports:
-      - ${RTPE_N2_NG_PORT}:${RTPE_N2_NG_PORT}/udp
-      - ${RTPE_N2_PORT_MIN}-${RTPE_N2_PORT_MAX}:${RTPE_N2_PORT_MIN}-${RTPE_N2_PORT_MAX}/udp
-    environment:
-      BIND_PORT: ${RTPE_N2_NG_PORT}
-      PORT_MIN: ${RTPE_N2_PORT_MIN}
-      PORT_MAX: ${RTPE_N2_PORT_MAX}
+  # rtpengine_n2:
+  #   extends:
+  #     file: common.yml
+  #     service: common
+  #   image: psanders/rtpengine:latest
+  #   ports:
+  #     - ${RTPE_N2_NG_PORT}:${RTPE_N2_NG_PORT}/udp
+  #     - ${RTPE_N2_PORT_MIN}-${RTPE_N2_PORT_MAX}:${RTPE_N2_PORT_MIN}-${RTPE_N2_PORT_MAX}/udp
+  #   environment:
+  #     BIND_PORT: ${RTPE_N2_NG_PORT}
+  #     PORT_MIN: ${RTPE_N2_PORT_MIN}
+  #     PORT_MAX: ${RTPE_N2_PORT_MAX}
 
 # Custom network so all services can communicate using a FQDN
 networks:

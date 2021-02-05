@@ -40,8 +40,10 @@
   },
   "homepage": "https://github.com/fonoster/fonos-rtpel7lb#readme",
   "dependencies": {
+    "@types/ioredis": "^4.19.3",
     "bencode": "^2.0.1",
     "consul": "^0.39.0",
+    "ioredis": "^4.19.4",
     "rtpengine-client": "^0.1.1"
   },
   "devDependencies": {
