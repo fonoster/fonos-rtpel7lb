@@ -5,8 +5,12 @@ export class RedisManager {
 
   public async createInstance(call_ID: string, rtpe_ID: string) {
       
-    await redis.set(call_ID, rtpe_ID)
+    let result = await redis.set(call_ID, rtpe_ID)
 
+    if(!result)
+      return 'Invalid Arguments'
+
+    return result;
   }
 
   public getInstance(call_ID: string): string {
