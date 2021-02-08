@@ -2,7 +2,6 @@ import chai from 'chai'
 import sinon from 'sinon'
 import sinonChai from 'sinon-chai'
 import ChaiAsPromised from 'chai-as-promised'
-import { RedisManager } from '../../../src/redis/redisconnection'
 import Redis from 'ioredis'
 const redis = new Redis();
 const sandbox = sinon.createSandbox()
@@ -13,7 +12,7 @@ chai.use(ChaiAsPromised)
 describe('Redis', () => {
 
   let findStub;
-  let sampleCall;
+  let sampleCall: string;
 
   beforeEach(() => {
     sampleCall = 'bar'
@@ -40,6 +39,20 @@ describe('Redis', () => {
 
         done();
       })
+    })
+
+  })
+
+  context('Set', () => {
+
+    it('should create an instance', () => {
+
+      redis.set('foo', 'bar', (err, result) => {
+        expect(err).to.not.exist
+        expect(result).to.exist
+        expect(result).to.be.a('string')
+      })
+
     })
 
   })
