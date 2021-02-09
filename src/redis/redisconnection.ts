@@ -1,20 +1,20 @@
-import Redis from 'ioredis'
-const redis = new Redis();
+import { Redis } from 'ioredis'
 
 export class RedisManager {
 
-  public async createInstance(call_ID: string, rtpe_ID: string) {
-      
-    let result = await redis.set(call_ID, rtpe_ID)
-
-    if(!result)
-      return 'Invalid Arguments'
-
-    return result;
+  private redis: Redis
+  constructor (redis: Redis) {
+  this.redis = redis;
   }
 
-  public getInstance(call_ID: string): string {
-    const res: any = redis.get(call_ID, (err, result) => {
+  public async create(callId: string, rtpeId: string) {
+      
+    return await this.redis.set(callId, rtpeId);
+
+  }
+
+  public get(callId: string): string {
+    const res: any = this.redis.get(callId, (err: any, result: any) => {
       if (err)
         return err;
     
@@ -25,10 +25,6 @@ export class RedisManager {
   }
   
 }
-
-
-// const redisM = new RedisManager();
-// redisM.createInstance("foo", "bar");
 
 
 // async function clg() {

@@ -1,6 +1,6 @@
 import dgram from 'dgram'
 import { BencodeUtils } from '../utils/bencode_util'
-const socket = dgram.createSocket('udp4')
+export const socket = dgram.createSocket('udp4')
 
 export class Sockets {
 

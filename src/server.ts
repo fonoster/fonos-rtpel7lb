@@ -12,9 +12,9 @@ export default class RTPL {
         console.log('Hello world')
     }
 
-    processRequest(call_info: any) {
-        let obj = this._Sockets.onMessage(call_info.msg, call_info);
-        let call: string = this._RedisManager.getInstance(obj.id)
+    processRequest(callInfo: any) {
+        let obj = this._Sockets.onMessage(callInfo.msg, callInfo);
+        let call: string = this._RedisManager.get(obj.id)
 
         if(!call){
             console.log('Es nueva');

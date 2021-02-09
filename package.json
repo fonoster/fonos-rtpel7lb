@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "A layer 7 load balancer for RTPEngine.",
   "private": true,
-    "nodemonConfig": {
+  "nodemonConfig": {
     "watch": [
       "./src/"
     ],
@@ -12,7 +12,7 @@
     "ignore": "**/*.d.ts"
   },
   "scripts": {
-    "start": "cross-env NODE_ENV=dev nodemon rtpel7lb.js",
+    "start": "cross-env NODE_ENV=dev nodemon rtpel7lb.ts",
     "build": "tsc -b tsconfig.json",
     "test": "cross-env NODE_ENV=dev nyc --reporter=lcov mocha -r ts-node/register test/src/redis/redis.unit.test.ts --exit"
   },
@@ -40,6 +40,7 @@
   },
   "homepage": "https://github.com/fonoster/fonos-rtpel7lb#readme",
   "dependencies": {
+    "@types/bencode": "^2.0.0",
     "@types/ioredis": "^4.19.3",
     "bencode": "^2.0.1",
     "chai-as-promised": "^7.1.1",

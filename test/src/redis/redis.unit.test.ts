@@ -3,7 +3,7 @@ import sinon from 'sinon'
 import sinonChai from 'sinon-chai'
 import ChaiAsPromised from 'chai-as-promised'
 import Redis from 'ioredis'
-const redis = new Redis();
+import { RedisManager } from '../../../src/redis/redisconnection';
 const sandbox = sinon.createSandbox()
 const expect = chai.expect
 chai.use(sinonChai)
@@ -13,10 +13,12 @@ describe('Redis', () => {
 
   let findStub;
   let sampleCall: string;
+  let redisMock = new Redis();
+  const redis = new RedisManager(redisMock);
 
   beforeEach(() => {
     sampleCall = 'bar'
-
+    
     findStub = sandbox.stub(redis, 'get').resolves(sampleCall)
   })
 
@@ -28,17 +30,26 @@ describe('Redis', () => {
 
     it('should get a call and return the result', (done) => {
       sandbox.restore();
-      let stub = sandbox.stub(redis, 'get').yields(null, {rtp_id: 'bar'});
+      let stub = sandbox.stub(redisMock, 'get').yields(null, {rtp_id: 'bar'});
+      
+      let res = redis.get('foo')
+      expect(stub).to.have.been.calledOnce
+      expect(stub).to.have.been.calledWith('foo')
+      expect(res).to.be.a('object')
+      expect(res).to.have.property('rtp_id').to.equal('bar')
+      done();
 
-      redis.get('foo', (err, result) => {
-        expect(err).to.not.exist
-        expect(stub).to.have.been.calledOnce
-        expect(stub).to.have.been.calledWith('foo');
-        expect(result).to.be.a('object')
-        expect(result).to.have.property('rtp_id').to.equal('bar')
+    })
 
-        done();
-      })
+    it('should trhow an err', (done) => {
+      sandbox.restore();
+      let stub = sandbox.stub(redisMock, 'get').throws(new Error);
+      try{
+        let res = redis.get('foo')
+      }catch(err){
+        expect(err).to.exist;
+      }
+      done();
     })
 
   })
@@ -46,13 +57,13 @@ describe('Redis', () => {
   context('Set', () => {
 
     it('should create an instance', () => {
+      sandbox.restore();
+      let stub = sandbox.stub(redisMock, 'set').yields('foo', 'bar');
 
-      redis.set('foo', 'bar', (err, result) => {
-        expect(err).to.not.exist
+      redis.create('foo', 'bar')
+      .then(result => {
         expect(result).to.exist
-        expect(result).to.be.a('string')
-      })
-
+      })      
     })
 
   })
