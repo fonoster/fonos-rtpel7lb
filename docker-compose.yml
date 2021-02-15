@@ -22,11 +22,7 @@ services:
     ports:
       # TODO: Refactor to use environment variables
       - '8300:8300'
-      - '8301:8301'
-      - '8301:8301/udp'
-      - '8500:8500'
-      - '8600:8600'
-      - '8600:8600/udp'
+
 
   # RTPEngine L7 Load Balancer
   rtpel7lb:

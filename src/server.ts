@@ -1,15 +1,21 @@
 import { Sockets } from './sockets/socket';
 import { RedisManager } from './redis/redisconnection';
-
+import Consul from 'consul'
+import { listServices } from './consul/consul';
 
 export default class RTPL {
     constructor(
         private _Sockets: Sockets,
-        private _RedisManager: RedisManager
+        private _RedisManager: RedisManager,
+        private _Consul = new Consul()
     ){}
 
     start() {
         console.log('Hello world')
+    }
+
+    updateRtpList() {
+      this._Consul.agent.service.list(listServices)
     }
 
     processRequest(callInfo: any) {
