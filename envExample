@@ -1,0 +1,15 @@
+# Change this to match the ip of your docker host
+PUBLIC_IP=192.168.1.149
+
+# Load Balancer
+RTPEL7LB_NG_PORT=22222
+
+# RTPEngine Instace 1
+RTPE_N1_NG_PORT=22223
+RTPE_N1_PORT_MIN=20000
+RTPE_N1_PORT_MAX=20010
+
+# RTPEngine Instace 2
+# RTPE_N2_NG_PORT=22224
+# RTPE_N2_PORT_MIN=30000
+# RTPE_N2_PORT_MAX=30010

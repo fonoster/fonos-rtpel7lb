@@ -25,14 +25,14 @@ services:
 
 
   # RTPEngine L7 Load Balancer
-  rtpel7lb:
-    extends:
-      file: common.yml
-      service: common
-    build: ./
-    image: fonoster/fonos-rtpel7lb:latest
-    ports:
-      - ${RTPEL7LB_NG_PORT}:${RTPEL7LB_NG_PORT}/udp
+  # rtpel7lb:
+  #   extends:
+  #     file: common.yml
+  #     service: common
+  #   build: ./
+  #   image: fonoster/fonos-rtpel7lb:latest
+  #   ports:
+  #     - ${RTPEL7LB_NG_PORT}:${RTPEL7LB_NG_PORT}/udp
 
   # RTPEngine instance N1
   rtpengine_n1:
