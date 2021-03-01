@@ -9,8 +9,8 @@ export class Sockets {
     server: any 
   ){
     this.socket = dgram.createSocket('udp4')
-    this.socket.bind(8081)
-    this.socket.on('message', (value) => console.log(value))
+    this.socket.bind(22224)
+    this.socket.on('message', (msg, info) => this.onMessage(msg, info))
     this.server = server
   }
 
@@ -22,13 +22,12 @@ export class Sockets {
     if (!obj)
       throw new Error(`malformed/unexpected message format ${msg}`)
 
-    console.log(`Received command '${obj.data.command}' from ${info.address}:${info.port}`);
-    console.log(`Received command : `+JSON.stringify(obj));
+    console.log(`Received command '${obj.data.command}' from ${info.address}:${info.port}`)
+    console.log(`Received command : `+JSON.stringify(obj))
 
-    this.server.processRequest(obj);
+    this.server.processRequest(obj)
   }
 
-  
   reply(info: any, message: any){
     this.socket.send(message, info.port, info.address, function (error) {
         if (error) {
@@ -38,10 +37,3 @@ export class Sockets {
   }
 
 }
-
-
-
-// const _socket = new Sockets();
-// socket.on('message', _socket.onMessage.bind(this))
-// socket.bind(8081)
-
