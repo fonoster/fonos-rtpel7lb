@@ -17,19 +17,20 @@ export class Sockets {
   onMessage(msg: any, info: any) {
     let obj = BencodeUtils.decodeMessage(msg);
 
-    console.log('Data received from client : ' + msg.toString());
+    // console.log('Data received from client : ' + msg.toString());
 
     if (!obj)
       throw new Error(`malformed/unexpected message format ${msg}`)
 
-    console.log(`Received command '${obj.data.command}' from ${info.address}:${info.port}`)
-    console.log(`Received command : `+JSON.stringify(obj))
 
-    this.server.processRequest(obj)
+    console.log(`Received command '${obj.data.command}' from ${info.address}:${info.port}`)
+    // console.log(`Received command : `+JSON.stringify(obj))
+
+    this.server.processRequest(obj, info)
   }
 
-  reply(info: any, message: any){
-    this.socket.send(message, info.port, info.address, function (error) {
+  reply(info: any, id: string, message: any){
+    this.socket.send(BencodeUtils.encodeMessage(id, message), info.port, info.address, function (error) {
         if (error) {
             console.log(`Error sending reply to client (${info.address}:${info.port}).`);
         }
