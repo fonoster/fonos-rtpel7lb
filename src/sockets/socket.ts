@@ -1,6 +1,5 @@
 import dgram from 'dgram'
 import { BencodeUtils } from '../utils/bencode_util'
-// export const socket = dgram.createSocket('udp4')
 
 export class Sockets {
   socket: dgram.Socket;
@@ -16,7 +15,6 @@ export class Sockets {
 
   onMessage(msg: any, info: any) {
     let obj = BencodeUtils.decodeMessage(msg);
-
     // console.log('Data received from client : ' + msg.toString());
 
     if (!obj)
@@ -32,9 +30,9 @@ export class Sockets {
   reply(info: any, id: string, message: any){
     this.socket.send(BencodeUtils.encodeMessage(id, message), info.port, info.address, function (error) {
         if (error) {
-            console.log(`Error sending reply to client (${info.address}:${info.port}).`);
+          console.log(`Error sending reply to client (${info.address}:${info.port}).`);
         }
     });
-  }
+  } 
 
 }

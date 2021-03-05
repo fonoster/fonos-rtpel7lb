@@ -1,6 +1,7 @@
 import Consul from 'consul'
 import { Sockets } from './sockets/socket';
 import { RedisManager } from './redis/redis_conn'
+const Client = require('rtpengine-client').Client
 
 export default class RTPL {
 	private rtpList: object[] = []
@@ -48,16 +49,30 @@ export default class RTPL {
 			console.log(callInfo.id);
 			// await this.redisManager.create(callInfo.id, "changeit me")
 		}
-	
-		console.log('callInfo.data.command', callInfo.data.command);
+		const sdp = String(callInfo.data.sdp)
+		const callid = callInfo.data['call-id']
+		const fromtag = callInfo.data['from-tag']
 
 		switch (command){
 			case 'ping': this.socket.reply(info, callInfo.id, 'pong')
 				break
 			case 'offer':
-				// await rtpeInstance.offer()
+				let client = new Client({port: info.port, host: info.address})
+				client.offer(22223, info.address, {
+					sdp,
+					'call-id': callid,
+					'from-tag': fromtag
+				}).then((res: any) => {
+					console.log(res);
+				}).catch((err: any) => {
+					console.log(err);
+				});
+
+				// await rtpeInstance.offer(client)
+				break
 			default:
 				throw new Error('Unknown command')
 		}
   }    
+
 }
