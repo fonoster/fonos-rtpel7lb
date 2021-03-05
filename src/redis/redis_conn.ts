@@ -22,4 +22,9 @@ export class RedisManager {
 
     return res;
   }
+
+  async del(callId: string) {
+    return await this.redis.del(callId);
+  }
+  
 }

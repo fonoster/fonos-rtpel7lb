@@ -4,7 +4,7 @@ import { RedisManager } from './redis/redis_conn'
 const Client = require('rtpengine-client').Client
 
 export default class RTPL {
-	private rtpList: object[] = []
+	private rtpList: any[] = []
 	private index: number = 0;
 	socket: Sockets;
 	private consul
@@ -29,7 +29,11 @@ export default class RTPL {
 			// if(exist) return
 			this.rtpList.push(element)
 		});
-		
+
+		// console.log(this.getNextRtpl());
+		// console.log(this.getNextRtpl());
+		// console.log(this.getNextRtpl());
+		// console.log(this.getNextRtpl());
 	}
 
 	public getNextRtpl(){
@@ -39,16 +43,27 @@ export default class RTPL {
 
   async processRequest(callInfo: any, info: any) {
 		let command: string = String(callInfo.data.command)
-		let call: string = await this.redisManager.get(callInfo.id)
+		let call: string = await this.redisManager.get(callInfo.data['call-id'])
 		let rtpeInstance
 
 		if(call){
-			rtpeInstance = this.redisManager.get(call);
+			// this.redisManager.del(info.address)
+			console.log('llamada existio');
+			rtpeInstance = await this.redisManager.get(callInfo.data['call-id']);
+			// console.log(rtpeInstance);
+			for(let i = 0; i < this.rtpList.length; i++){
+				if(this.rtpList[i].ID == rtpeInstance){
+					rtpeInstance = this.rtpList[i]
+				}
+			}
+			console.log(rtpeInstance);
 		} else {
 			rtpeInstance = this.getNextRtpl();
-			console.log(callInfo.id);
-			// await this.redisManager.create(callInfo.id, "changeit me")
+			console.log('llamada new:', callInfo.id);
+			console.log('Rtpe de turno:', rtpeInstance);
+			await this.redisManager.create(callInfo.data['call-id'], rtpeInstance.ID)
 		}
+
 		const sdp = String(callInfo.data.sdp)
 		const callid = callInfo.data['call-id']
 		const fromtag = callInfo.data['from-tag']
@@ -57,16 +72,16 @@ export default class RTPL {
 			case 'ping': this.socket.reply(info, callInfo.id, 'pong')
 				break
 			case 'offer':
-				let client = new Client({port: info.port, host: info.address})
-				client.offer(22223, info.address, {
-					sdp,
-					'call-id': callid,
-					'from-tag': fromtag
-				}).then((res: any) => {
-					console.log(res);
-				}).catch((err: any) => {
-					console.log(err);
-				});
+				// let client = new Client({port: info.port, host: info.address})
+				// client.offer(22223, info.address, {
+				// 	sdp,
+				// 	'call-id': callid,
+				// 	'from-tag': fromtag
+				// }).then((res: any) => {
+				// 	console.log(res);
+				// }).catch((err: any) => {
+				// 	console.log(err);
+				// });
 
 				// await rtpeInstance.offer(client)
 				break
