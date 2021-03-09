@@ -27,13 +27,9 @@ export default class RTPL {
 		result.forEach((element: object) => {
 			// const exist = this.rtpList.filter((e: object) => e === element)
 			// if(exist) return
+
 			this.rtpList.push(element)
 		});
-
-		// console.log(this.getNextRtpl());
-		// console.log(this.getNextRtpl());
-		// console.log(this.getNextRtpl());
-		// console.log(this.getNextRtpl());
 	}
 
 	public getNextRtpl(){
@@ -46,11 +42,10 @@ export default class RTPL {
 		let call: string = await this.redisManager.get(callInfo.data['call-id'])
 		let rtpeInstance
 
+		console.log(call);
 		if(call){
-			// this.redisManager.del(info.address)
 			console.log('llamada existio');
 			rtpeInstance = await this.redisManager.get(callInfo.data['call-id']);
-			// console.log(rtpeInstance);
 			for(let i = 0; i < this.rtpList.length; i++){
 				if(this.rtpList[i].ID == rtpeInstance){
 					rtpeInstance = this.rtpList[i]
