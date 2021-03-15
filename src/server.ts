@@ -38,14 +38,15 @@ export default class RTPL {
 	}
 
   async processRequest(callInfo: any, info: any) {
-		let command: string = String(callInfo.data.command)
-		let call: string = await this.redisManager.get(callInfo.data['call-id'])
+		const command: string = String(callInfo.data.command)
+		const callId: string = callInfo.data['call-id']
+		let call: string = await this.redisManager.get(callId)
 		let rtpeInstance
 
 		console.log(call);
 		if(call){
 			console.log('llamada existio');
-			rtpeInstance = await this.redisManager.get(callInfo.data['call-id']);
+			rtpeInstance = await this.redisManager.get(callId);
 			for(let i = 0; i < this.rtpList.length; i++){
 				if(this.rtpList[i].ID == rtpeInstance){
 					rtpeInstance = this.rtpList[i]
@@ -56,30 +57,44 @@ export default class RTPL {
 			rtpeInstance = this.getNextRtpl();
 			console.log('llamada new:', callInfo.id);
 			console.log('Rtpe de turno:', rtpeInstance);
-			await this.redisManager.create(callInfo.data['call-id'], rtpeInstance.ID)
+			console.log('Puerto: ', rtpeInstance.Port);
+			await this.redisManager.create(callId, rtpeInstance.ID)
 		}
 
 		const sdp = String(callInfo.data.sdp)
 		const callid = callInfo.data['call-id']
 		const fromtag = callInfo.data['from-tag']
+		let client = new Client({port: info.port, host: info.address})
 
 		switch (command){
 			case 'ping': this.socket.reply(info, callInfo.id, 'pong')
 				break
 			case 'offer':
-				// let client = new Client({port: info.port, host: info.address})
-				// client.offer(22223, info.address, {
-				// 	sdp,
-				// 	'call-id': callid,
-				// 	'from-tag': fromtag
-				// }).then((res: any) => {
-				// 	console.log(res);
-				// }).catch((err: any) => {
-				// 	console.log(err);
-				// });
+				client.offer(rtpeInstance.Port, info.address, {
+					sdp,
+					'call-id': callid,
+					'from-tag': fromtag
+				}).then((res: any) => {
+					console.log(res);
+				}).catch((err: any) => {
+					console.log(err);
+				});
 
 				// await rtpeInstance.offer(client)
 				break
+			
+			case 'answer':
+				client.answer(rtpeInstance.Port, info.address, {
+					sdp,
+					'call-id': callid,
+					'from-tag': fromtag
+				}).then((res: any) => {
+					console.log(res);
+				}).catch((err: any) => {
+					console.log(err);
+				});
+				break;
+
 			default:
 				throw new Error('Unknown command')
 		}
