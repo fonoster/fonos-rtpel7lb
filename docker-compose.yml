@@ -22,21 +22,17 @@ services:
     ports:
       # TODO: Refactor to use environment variables
       - '8300:8300'
-      - '8301:8301'
-      - '8301:8301/udp'
       - '8500:8500'
-      - '8600:8600'
-      - '8600:8600/udp'
 
   # RTPEngine L7 Load Balancer
-  rtpel7lb:
-    extends:
-      file: common.yml
-      service: common
-    build: ./
-    image: fonoster/fonos-rtpel7lb:latest
-    ports:
-      - ${RTPEL7LB_NG_PORT}:${RTPEL7LB_NG_PORT}/udp
+  # rtpel7lb:
+  #   extends:
+  #     file: common.yml
+  #     service: common
+  #   build: ./
+  #   image: fonoster/fonos-rtpel7lb:latest
+  #   ports:
+  #     - ${RTPEL7LB_NG_PORT}:${RTPEL7LB_NG_PORT}/udp
 
   # RTPEngine instance N1
   rtpengine_n1:
@@ -51,20 +47,22 @@ services:
       BIND_PORT: ${RTPE_N1_NG_PORT}
       PORT_MIN: ${RTPE_N1_PORT_MIN}
       PORT_MAX: ${RTPE_N1_PORT_MAX}
+      LOG_LEVEL: '6'
 
   # RTPEngine instance N2
   rtpengine_n2:
-    extends:
-      file: common.yml
-      service: common
-    image: psanders/rtpengine:latest
-    ports:
-      - ${RTPE_N2_NG_PORT}:${RTPE_N2_NG_PORT}/udp
-      - ${RTPE_N2_PORT_MIN}-${RTPE_N2_PORT_MAX}:${RTPE_N2_PORT_MIN}-${RTPE_N2_PORT_MAX}/udp
-    environment:
-      BIND_PORT: ${RTPE_N2_NG_PORT}
-      PORT_MIN: ${RTPE_N2_PORT_MIN}
-      PORT_MAX: ${RTPE_N2_PORT_MAX}
+     extends:
+       file: common.yml
+       service: common
+     image: psanders/rtpengine:latest
+     ports:
+       - ${RTPE_N2_NG_PORT}:${RTPE_N2_NG_PORT}/udp
+       - ${RTPE_N2_PORT_MIN}-${RTPE_N2_PORT_MAX}:${RTPE_N2_PORT_MIN}-${RTPE_N2_PORT_MAX}/udp
+     environment:
+       BIND_PORT: ${RTPE_N2_NG_PORT}
+       PORT_MIN: ${RTPE_N2_PORT_MIN}
+       PORT_MAX: ${RTPE_N2_PORT_MAX}
+       LOG_LEVEL: '6'
 
 # Custom network so all services can communicate using a FQDN
 networks:
