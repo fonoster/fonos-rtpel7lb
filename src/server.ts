@@ -37,15 +37,14 @@ export default class RTPL {
 		return this.rtpList[this.index++]
 	}
 
-  async processRequest(callInfo: any, info: any) {
+  	async processRequest(callInfo: any, info: any) {
+	try {
 		const command: string = String(callInfo.data.command)
 		const callId: string = callInfo.data['call-id']
 		let call: string = await this.redisManager.get(callId)
 		let rtpeInstance
 
-		console.log(call);
 		if(call){
-			console.log('llamada existio');
 			rtpeInstance = await this.redisManager.get(callId);
 			for(let i = 0; i < this.rtpList.length; i++){
 				if(this.rtpList[i].ID == rtpeInstance){
@@ -55,49 +54,25 @@ export default class RTPL {
 			console.log(rtpeInstance);
 		} else {
 			rtpeInstance = this.getNextRtpl();
-			console.log('llamada new:', callInfo.id);
-			console.log('Rtpe de turno:', rtpeInstance);
-			console.log('Puerto: ', rtpeInstance.Port);
 			await this.redisManager.create(callId, rtpeInstance.ID)
 		}
 
-		const sdp = String(callInfo.data.sdp)
-		const callid = callInfo.data['call-id']
-		const fromtag = callInfo.data['from-tag']
-		let client = new Client({port: info.port, host: info.address})
+		const client = new Client({port: info.port, host: info.address})
+		let response
 
-		switch (command){
-			case 'ping': this.socket.reply(info, callInfo.id, 'pong')
-				break
-			case 'offer':
-				client.offer(rtpeInstance.Port, info.address, {
-					sdp,
-					'call-id': callid,
-					'from-tag': fromtag
-				}).then((res: any) => {
-					console.log(res);
-				}).catch((err: any) => {
-					console.log(err);
-				});
-
-				// await rtpeInstance.offer(client)
-				break
-			
-			case 'answer':
-				client.answer(rtpeInstance.Port, info.address, {
-					sdp,
-					'call-id': callid,
-					'from-tag': fromtag
-				}).then((res: any) => {
-					console.log(res);
-				}).catch((err: any) => {
-					console.log(err);
-				});
-				break;
-
-			default:
-				throw new Error('Unknown command')
+		if (command === 'ping') {
+			response =  { result: 'pong' }
+		} else {
+			response = await client[command](rtpeInstance.Port, info.address, callInfo.data)
 		}
+
+		response['call-id'] = callId
+		response['rtpe-id'] = rtpeInstance.ID
+
+		this.socket.reply(info, callInfo.id, response)
+  	} catch(error:any) {
+		console.log(error)
+	}	
   }    
 
 }

@@ -1,4 +1,6 @@
-import bencode from 'bencode'
+// WARNING: If import is used bencode has a strange behavior disables magic
+// converstion.
+const bencode = require('bencode')
 
 export const BencodeUtils = {
 
@@ -9,7 +11,7 @@ export const BencodeUtils = {
         if (-1 !== idx) {
             const id = m.substring(0, idx)
             try {
-                const data = bencode.decode(Buffer.from(m.substring(idx + 1)))
+                const data = bencode.decode(Buffer.from(m.substring(idx + 1)), 'utf-8')
                 return { id, data }
             } catch (err) {
                 console.error(err)
