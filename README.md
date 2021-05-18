@@ -1,4 +1,4 @@
-# Fonos RTPEL7LB
+# RTPEL7LB
 
 > A layer 7 load balancer for RTPEngine.
 
